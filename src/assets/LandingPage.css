@@ -1,0 +1,117 @@
+.landing-page {
+  width: 100%;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Container for sections to maintain readable width */
+.hero-section,
+.featured-quizzes,
+.top-scorers {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: #2a9d8f;
+  border-radius: 10px;
+  padding: 40px;
+  margin: 20px 0;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('./gears-pattern.svg') repeat;
+  opacity: 0.1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content h2 {
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.hero-buttons button {
+  padding: 12px 24px;
+  border-radius: 25px;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.start-quiz {
+  background-color: #f4a261;
+  color: white;
+}
+
+.how-it-works {
+  background-color: white;
+  color: #2a9d8f;
+}
+
+.hero-buttons button:hover {
+  transform: scale(1.05);
+}
+
+/* Featured Quizzes Section */
+.featured-quizzes {
+  padding: 40px 0;
+}
+
+.featured-quizzes h3 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #264653;
+}
+
+/* Top Scorers Section */
+.top-scorers {
+  padding: 40px 0;
+}
+
+.top-scorers h3 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #264653;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-content h2 {
+    font-size: 2em;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-buttons button {
+    width: 100%;
+    max-width: 200px;
+  }
+}
