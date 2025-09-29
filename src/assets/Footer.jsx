@@ -27,7 +27,7 @@ function Footer() {
                 </div>
                 
                 <div className="copyright">
-                    © 2024 QuizMaster
+
                 </div>
             </div>
         </footer>

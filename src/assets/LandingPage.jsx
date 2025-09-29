@@ -10,23 +10,30 @@ function LandingPage() {
       <Navigation />
 
       {/* Main Hero Section */}
-      <div className="hero-section">
-        <div className="hero-content">
-          <h2>Test Your Knowledge.<br />Challenge Your Friends.</h2>
-          <div className="hero-buttons">
-            <button className="start-quiz">Start Quiz</button>
-            <button className="how-it-works">How It Works</button>
+      <div className="hero-section custom-hero">
+        <div className="custom-hero-content">
+          <h1 className="custom-hero-title">
+            Take <span className="highlight-orange">Quizzes</span>, Learn &amp; Have Fun! <span className="moon-icon">🌙</span>
+          </h1>
+          <p className="custom-hero-sub">
+            Test your knowledge or <a href="#" className="custom-link">create your own quiz adventure</a>.
+          </p>
+          <div className="custom-hero-question-row">
+            <span className="book-icon">📖</span>
+            <span className="question-text">What would you like to learn today?</span>
+            <span className="arrow-icon" style={{color:'#1976d2',fontSize:'2em',marginLeft:'8px',transform:'rotate(-25deg)',display:'inline-block'}}>&#10553;</span>
           </div>
+          <form className="custom-hero-search">
+            <input type="text" placeholder="Search Quizzes.." className="search-input" />
+            <button type="submit" className="search-btn">
+              <span className="search-icon">&#128269;</span>
+            </button>
+          </form>
         </div>
-      </div>
+      </div>  
 
-      {/* Featured Quizzes Section */}
-      <section className="featured-quizzes">
-        <h3>Featured Quizzes</h3>
-        <div className="quiz-categories">
-          <Courses />
-        </div>
-      </section>
+      {/* Explore From Topics & Quiz Cards Section (now in Courses) */}
+      <Courses />
 
       {/* Top Scorers Section */}
       <section className="top-scorers">

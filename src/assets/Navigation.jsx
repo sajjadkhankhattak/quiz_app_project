@@ -5,13 +5,13 @@ function Navigation() {
     <nav className="navbar navbar-expand-lg">
       <div className="container">
         <div className="navbar-brand">
-          <span className="logo-icon">Q</span>
-          <span className="logo-text">QuizMaster</span>
+          <span className="logo-icon">Quiz</span>
+          <span className="logo-text">Whizz</span>
         </div>
-        <button 
-          className="navbar-toggler" 
-          type="button" 
-          data-bs-toggle="collapse" 
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
         >
           <span className="navbar-toggler-icon"></span>
@@ -26,7 +26,20 @@ function Navigation() {
             </li>
           </ul>
           <div className="nav-right">
-            <span className="browse-text">Browse Categories</span>
+            <div className="nav-item dropdown">
+              <span className="nav-link dropdown-toggle" id="takeQuizDropdown" role="button" tabIndex={0} data-bs-toggle="dropdown" aria-expanded="false">
+                Take a Quiz
+              </span>
+              <ul className="dropdown-menu" aria-labelledby="takeQuizDropdown">
+                <li><a className="dropdown-item" href="#quiz-math">Math</a></li>
+                <li><a className="dropdown-item" href="#quiz-science">Science</a></li>
+                <li><a className="dropdown-item" href="#quiz-history">History</a></li>
+                <li><a className="dropdown-item" href="#quiz-sports">Sports</a></li>
+                <li><a className="dropdown-item" href="#quiz-technology">Technology</a></li>
+                <li><a className="dropdown-item" href="#quiz-art">Art</a></li>
+                <li><a className="dropdown-item" href="#quiz-music">Music</a></li>
+              </ul>
+            </div>
             <span className="leaderboard-text">Leaderboard</span>
             <button className="login-btn">Login</button>
           </div>
