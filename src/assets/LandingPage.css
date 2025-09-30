@@ -125,25 +125,23 @@
 }
 
 /* Container for sections to maintain readable width */
-.hero-section,
-.featured-quizzes,
-.top-scorers {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+
 
 /* Hero Section */
 .hero-section {
   background-color: #2a9d8f;
-  border-radius: 10px;
-  padding: 40px;
-  margin: 20px 0;
+  border-radius: 0;
+  padding: 40px 0;
+  margin: 0;
   color: white;
   text-align: center;
   position: relative;
   overflow: hidden;
+  width: 100vw;
+  max-width: 100vw;
+  left: 50%;
+  right: 50%;
+  transform: translateX(-50%);
 }
 
 /* Custom Hero Section Styles */
@@ -155,6 +153,11 @@
   padding: 48px 0 32px 0;
   margin: 0;
   text-align: center;
+  width: 100vw;
+  max-width: 100vw;
+  left: 50%;
+  right: 50%;
+  transform: translateX(-50%);
 }
 
 .custom-hero-content {
@@ -248,6 +251,7 @@
   bottom: 0;
   background: url('./gears-pattern.svg') repeat;
   opacity: 0.1;
+  width: 100%;
 }
 
 .hero-content {
@@ -354,9 +358,9 @@
 }
 .quiz-card-row {
   display: flex;
+  justify-content: center;
   gap: 32px;
   flex-wrap: wrap;
-  justify-content: flex-start;
 }
 .quiz-card {
   background: #fff;
@@ -397,7 +401,6 @@
   .hero-content h2 {
     font-size: 2em;
   }
-
   .hero-buttons {
     flex-direction: column;
     align-items: center;
@@ -408,3 +411,4 @@
     max-width: 200px;
   }
 }
+

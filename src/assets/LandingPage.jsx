@@ -37,7 +37,6 @@ function LandingPage() {
 
       {/* Top Scorers Section */}
       <section className="top-scorers">
-        <h3>Top Scorers</h3>
         <ScoreCard />
       </section>
 

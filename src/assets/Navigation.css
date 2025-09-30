@@ -191,3 +191,20 @@
     width: 100%;
   }
 }
+@media(max-width: 430px){
+  .navbar .container {
+    padding: 0 10px;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0;
+  }
+
+  .nav-right {
+    gap: 0.5rem;
+  }
+
+  .login-btn {
+    padding: 0.5rem 1rem;
+  }
+}
