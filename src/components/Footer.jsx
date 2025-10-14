@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="row">
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="d-flex align-items-center mb-3">
-              <img width="80" class="d-inline-block align-text-top" src="/images/image.png"/>
+              <img width="80" className="d-inline-block align-text-top" src="/images/image.png"/>
             </div>
             <p className="text-muted small">
               Create and share engaging quizzes, tests, and assessments. Learn, teach, and have fun!
@@ -55,7 +55,7 @@ export default function Footer() {
             <ul className="list-unstyled">
               <li className="mb-2"><a href="#" className="text-muted text-decoration-none">About Us</a></li>
               <li className="mb-2"><a href="#" className="text-muted text-decoration-none">Careers</a></li>
-              <li className="mb-2"><a href="#" className="text-muted text-decoration-none">Contact</a></li>
+              <li className="mb-2"><a href="/contact" className="text-muted text-decoration-none">Contact</a></li>
               <li className="mb-2"><a href="#" className="text-muted text-decoration-none">Partners</a></li>
               <li className="mb-2"><a href="#" className="text-muted text-decoration-none">Affiliates</a></li>
             </ul>
