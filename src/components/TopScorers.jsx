@@ -4,6 +4,7 @@ export default function TopScorers() {
   const scorers = [
     { rank: 1, player: 'QuizWhiz', opponent: 'MindGames', score: 1, color: '#10b981' },
     { rank: 2, player: 'Sajjad', opponent: 'Brainiac', score: 8, color: '#ef4444' }
+    
   ];
 
   const getRankIcon = (rank) => {

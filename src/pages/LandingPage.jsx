@@ -10,6 +10,7 @@ function LandingPage() {
         <QuizGrid />
         <TopScorers />
         <Footer />
+    
     </>);
 }
 

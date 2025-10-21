@@ -29,15 +29,15 @@ const Contact = () => {
       icon: <Mail size={24} />,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      value: 'support@quizapp.com',
-      link: 'mailto:support@quizapp.com'
+      value: 'sajjadkhankhattak@gmail.com',
+      link: 'sajjadkhankhattak20@gmail.com'
     },
     {
       icon: <Phone size={24} />,
       title: 'Call Us',
       description: 'Mon to Fri from 9am to 6pm',
-      value: '+1 (555) 123-4567',
-      link: 'tel:+15551234567'
+      value: '+923159831745',
+      link: 'tel:+923159831745'
     },
     {
       icon: <MessageCircle size={24} />,
@@ -50,7 +50,7 @@ const Contact = () => {
       icon: <MapPin size={24} />,
       title: 'Visit Us',
       description: 'Come say hello at our office',
-      value: '123 Quiz Street, Knowledge City',
+      value: 'comsats university abbottabad',
       link: '#map'
     }
   ];
@@ -106,7 +106,7 @@ const Contact = () => {
                     <label htmlFor="name" className="form-label fw-medium text-dark">
                       <User size={16} className="me-2" />
                       Full Name
-                    </label>
+                      </label>
                     <input
                       type="text"
                       className="form-control py-2"
@@ -183,7 +183,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* FAQ Section */}
+      FAQ Section
       <div className="row mt-5">
         <div className="col-12">
           <div className="card border-0 shadow-sm">

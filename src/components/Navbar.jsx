@@ -1,4 +1,4 @@
-import { BookOpen, ChevronDown, Menu, Plus, User } from 'lucide-react';
+import { Settings, Menu, Plus, User } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Navbar() {
@@ -6,6 +6,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const isCreateQuizPage = location.pathname === '/create-quiz';
+  const isAdminPage = location.pathname === '/admin';
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
       <div className="container">
@@ -35,48 +37,37 @@ export default function Navbar() {
         {/* Navigation Items */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav align-items-center ms-auto">
-            {/* Quizzes Dropdown */}
-            <li className="nav-item dropdown me-3">
-              <a
-                className="nav-link dropdown-toggle d-flex align-items-center text-dark fw-medium px-3 py-2 rounded"
-                href="#"
-                id="quizzesDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <BookOpen size={15} className="me-2" />
-                Take Quizzes
-              </a>
-              <ul className="dropdown-menu border-0 shadow-lg p-3" aria-labelledby="quizzesDropdown">
-                <div className="row">
-                  <div className="col-">
-                    <li><h6 className="dropdown-header text-uppercase small fw-semibold text-muted mb-2">Academic</h6></li>
-                    <li><a className="dropdown-item py-2 rounded" href="#math">Math Quizzes</a></li>
-                    <li><a className="dropdown-item py-2 rounded" href="#science">Science Quizzes</a></li>
-                    <li><a className="dropdown-item py-2 rounded" href="#history">History Quizzes</a></li>
+            {/* Admin Portal Button - Hidden on admin page */}
+            {!isAdminPage && (
+              <li className="nav-item me-3">
+                <button 
+                  onClick={() => navigate('/admin')} 
+                  className="btn btn-outline-primary d-flex align-items-center px-3 py-2"
+                >
+                  <Settings size={18} className="me-2" />
+                  Admin Portal
+                </button>
+              </li>
+            )}
 
-                    {/* <li><h6 className="dropdown-header text-uppercase small fw-semibold text-muted mb-2">Popular</h6></li> */}
-                    <li><a className="dropdown-item py-2 rounded" href="#sports">Sports Quizzes</a></li>
-                    <li><a className="dropdown-item py-2 rounded" href="#entertainment">Entertainment Quizzes</a></li>
-                    <li><a className="dropdown-item py-2 rounded" href="#technology">Technology Quizzes</a></li>
-                  </div>
-                </div>
-                <li><hr className="my-3" /></li>
-                <li>
-                  <a className="dropdown-item text-primary fw-semibold py-2 rounded" href="#all">
-                    Browse All Quizzes →
-                  </a>
-                </li>
-              </ul>
-            </li>
+            {/* Back to Site Button - Only show on admin page */}
+            {isAdminPage && (
+              <li className="nav-item me-3">
+                <button 
+                  onClick={() => navigate('/')} 
+                  className="btn btn-outline-primary d-flex align-items-center px-3 py-2"
+                >
+                  ← Back to Site
+                </button>
+              </li>
+            )}
 
-            {/* Create Quiz Button - Hidden on create-quiz page */}
-            {!isCreateQuizPage && (
+            {/* Create Quiz Button - Hidden on create-quiz and admin pages */}
+            {!isCreateQuizPage && !isAdminPage && (
               <li className="nav-item me-3">
                 <button 
                   onClick={() => navigate('/create-quiz')} 
-                  className="btn btn-primary d-flex align-items-center px-3 py-2"
+                  className="btn btn-outline-primary d-flex align-items-center px-3 py-2"
                 >
                   <Plus size={18} className="me-2" />
                   Create Quiz
@@ -84,19 +75,23 @@ export default function Navbar() {
               </li>
             )}
 
-            {/* Auth Buttons */}
-            <li className="nav-item me-2">
-              <Link to="/login" className="btn btn-outline-primary d-flex align-items-center px-3 py-2">
-                <User size={18} className="me-2" />
-                Login
-              </Link>
-            </li>
+            {/* Auth Buttons - Hidden on admin page */}
+            {!isAdminPage && (
+              <>
+                <li className="nav-item me-2">
+                  <Link to="/login" className="btn btn-outline-primary d-flex align-items-center px-3 py-2">
+                    <User size={18} className="me-2" />
+                    Login
+                  </Link>
+                </li>
 
-            <li className="nav-item">
-              <Link to="/signup" className="btn btn-outline-primary d-flex align-items-center px-3 py-2">
-                Sign Up
-              </Link>
-            </li>
+                <li className="nav-item">
+                  <Link to="/signup" className="btn btn-outline-primary d-flex align-items-center px-3 py-2">
+                    Sign Up
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

@@ -1,83 +1,175 @@
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+
 export default function Signup() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+    reset
+  } = useForm();
+
+  const navigate = useNavigate();
+  const password = watch("password");
+
+  // Simple form submission
+  const onSubmit = (data) => {
+    console.log("Form data:", data);
+    alert("✅ Account created successfully!");
+    reset();
+    navigate("/login");
+  };
+
   return (
-    <div className="container-fluid vh-100" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-      <div className="row h-100 justify-content-center align-items-center">
-        {/* Changed to smaller column size */}
-        <div className="col-11 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+    <div className="container-fluid min-vh-100 d-flex justify-content-center align-items-center px-2"
+      style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <div className="row w-100 justify-content-center">
+        <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
           <div className="card shadow-lg border-0 rounded-3">
-            {/* Reduced padding */}
-            <div className="card-body p-4 p-md-4">
+            <div className="card-body p-3 p-md-4">
               <div className="text-center mb-3">
                 <h2 className="fw-bold text-primary mb-1">Create Account</h2>
-                <p className="text-muted">Join QuizWizzes today!</p>
+                <p className="text-muted small">Join QuizWizzes today!</p>
               </div>
-              
-              <form>
+
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* Name Fields */}
                 <div className="row">
-                  <div className="col-md-6 mb-2">
-                    <label htmlFor="firstName" className="form-label small fw-semibold">First Name</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      id="firstName" 
-                      placeholder="Sajjad"
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label small fw-semibold">First Name</label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.firstName && "is-invalid"}`}
+                      placeholder="First name"
+                      {...register("firstName", { 
+                        required: "First name is required" 
+                      })}
                     />
+                    {errors.firstName && (
+                      <div className="invalid-feedback">
+                        {errors.firstName.message}
+                      </div>
+                    )}
                   </div>
-                  <div className="col-md-6 mb-2">
-                    <label htmlFor="lastName" className="form-label small fw-semibold">Last Name</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      id="lastName" 
-                      placeholder="alam"
+
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label small fw-semibold">Last Name</label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.lastName && "is-invalid"}`}
+                      placeholder="Last name"
+                      {...register("lastName", { 
+                        required: "Last name is required" 
+                      })}
                     />
+                    {errors.lastName && (
+                      <div className="invalid-feedback">
+                        {errors.lastName.message}
+                      </div>
+                    )}
                   </div>
                 </div>
-                
-                <div className="mb-2">
-                  <label htmlFor="email" className="form-label small fw-semibold">Email Address</label>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    id="email" 
-                    placeholder="Sajjad@example.com"
-                  />
-                </div>
-                
-                <div className="mb-2">
-                  <label htmlFor="password" className="form-label small fw-semibold">Password</label>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    id="password" 
-                    placeholder="••••••••"
-                  />
-                </div>
-                
+
+                {/* Email Field */}
                 <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label small fw-semibold">Confirm Password</label>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    id="confirmPassword" 
-                    placeholder="••••••••"
+                  <label className="form-label small fw-semibold">Email Address</label>
+                  <input
+                    type="email"
+                    className={`form-control ${errors.email && "is-invalid"}`}
+                    placeholder="Enter your email"
+                    {...register("email", { 
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email address"
+                      }
+                    })}
                   />
+                  {errors.email && (
+                    <div className="invalid-feedback">
+                      {errors.email.message}
+                    </div>
+                  )}
                 </div>
-                
+
+                {/* Password Field */}
+                <div className="mb-3">
+                  <label className="form-label small fw-semibold">Password</label>
+                  <input
+                    type="password"
+                    className={`form-control ${errors.password && "is-invalid"}`}
+                    placeholder="••••••••"
+                    {...register("password", { 
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters"
+                      }
+                    })}
+                  />
+                  {errors.password && (
+                    <div className="invalid-feedback">
+                      {errors.password.message}
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="mb-3">
+                  <label className="form-label small fw-semibold">Confirm Password</label>
+                  <input
+                    type="password"
+                    className={`form-control ${errors.confirmPassword && "is-invalid"}`}
+                    placeholder="••••••••"
+                    {...register("confirmPassword", { 
+                      required: "Please confirm your password",
+                      validate: value => 
+                        value === password || "Passwords do not match"
+                    })}
+                  />
+                  {errors.confirmPassword && (
+                    <div className="invalid-feedback">
+                      {errors.confirmPassword.message}
+                    </div>
+                  )}
+                </div>
+
+                {/* Terms Checkbox */}
                 <div className="form-check mb-3">
-                  <input className="form-check-input" type="checkbox" id="terms" />
-                  <label className="form-check-label text-muted small" htmlFor="terms">
-                    I agree to the <a href="#terms" className="text-primary">Terms</a> and <a href="#privacy" className="text-primary">Privacy Policy</a>
+                  <input 
+                    className={`form-check-input ${errors.terms && "is-invalid"}`}
+                    type="checkbox" 
+                    id="terms" 
+                    {...register("terms", { 
+                      required: "You must accept the terms and conditions" 
+                    })}
+                  />
+                  <label className="form-check-label text-muted small">
+                    I agree to the <a href="#">Terms</a> & <a href="#">Privacy Policy</a>
                   </label>
+                  {errors.terms && (
+                    <div className="invalid-feedback d-block">
+                      {errors.terms.message}
+                    </div>
+                  )}
                 </div>
-                
-                <button type="submit" className="btn btn-primary w-100 mb-3">
-                  Create Account
+
+                {/* Submit Button */}
+                <button 
+                  type="submit" 
+                  className="btn btn-primary w-100 mb-3"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating Account..." : "Create Account"}
                 </button>
-                
+
+                {/* Login Link */}
                 <div className="text-center">
-                  <span className="text-muted small">Already have an account? </span>
-                  <a href="/login" className="text-primary fw-semibold small text-decoration-none">Sign In</a>
+                  <p className="small text-muted">
+                    Already have an account? <a href="/login">Sign In</a>
+                  </p>
                 </div>
               </form>
             </div>
