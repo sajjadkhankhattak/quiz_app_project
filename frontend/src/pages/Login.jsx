@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { login } from "../services/api";
 
 export default function Login() {
-  // React Hook Form
   const {
     register,
     handleSubmit,
@@ -11,30 +11,34 @@ export default function Login() {
     setError
   } = useForm();
 
-  // Navigate hook
   const navigate = useNavigate();
 
-  // Handle form submission
   const onSubmit = async (data) => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Here you would typically make an API call to your backend
       console.log("Login data:", data);
       
-      // Show success message
-      alert("✅ Login successful!");
-      
-      // Reset form
-      reset();
-      
-      // Redirect to home
-      navigate("/");
-    } catch (error) {
-      setError("root", {
-        message: "Login failed. Please try again."
+      // Use your service function
+      const response = await login({
+        email: data.email,
+        password: data.password
       });
+
+      console.log("Login response:", response.data);
+      
+      // Store token or user data
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+      
+      alert("✅ Login successful!");
+      reset();
+      navigate("/");
+      
+    } catch (error) {
+      console.error("Login error:", error);
+      const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
+      setError("root", { message: errorMessage });
     }
   };
 

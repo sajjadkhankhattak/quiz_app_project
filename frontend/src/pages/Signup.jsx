@@ -1,10 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { register } from "../services/api";
 
 export default function Signup() {
   const {
-    register,
+    register: registerForm,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
@@ -14,12 +15,31 @@ export default function Signup() {
   const navigate = useNavigate();
   const password = watch("password");
 
-  // Simple form submission
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
-    alert("✅ Account created successfully!");
-    reset();
-    navigate("/login");
+  // Send data to backend using your service
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form data:", data);
+      
+      // Prepare data for backend
+      const userData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password
+      };
+
+      // Use your service function
+      const response = await register(userData); 
+      
+      console.log("Backend response:", response.data);
+      alert("✅ Account created successfully!");
+      reset();
+      navigate("/login");
+      
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert(`❌ Error: ${error.response?.data?.message || error.message}`);
+    }
   };
 
   return (
@@ -43,7 +63,7 @@ export default function Signup() {
                       type="text"
                       className={`form-control ${errors.firstName && "is-invalid"}`}
                       placeholder="First name"
-                      {...register("firstName", { 
+                      {...registerForm("firstName", { 
                         required: "First name is required" 
                       })}
                     />
@@ -60,7 +80,7 @@ export default function Signup() {
                       type="text"
                       className={`form-control ${errors.lastName && "is-invalid"}`}
                       placeholder="Last name"
-                      {...register("lastName", { 
+                      {...registerForm("lastName", { 
                         required: "Last name is required" 
                       })}
                     />
@@ -79,7 +99,7 @@ export default function Signup() {
                     type="email"
                     className={`form-control ${errors.email && "is-invalid"}`}
                     placeholder="Enter your email"
-                    {...register("email", { 
+                    {...registerForm("email", { 
                       required: "Email is required",
                       pattern: {
                         value: /^\S+@\S+$/i,
@@ -101,7 +121,7 @@ export default function Signup() {
                     type="password"
                     className={`form-control ${errors.password && "is-invalid"}`}
                     placeholder="••••••••"
-                    {...register("password", { 
+                    {...registerForm("password", { 
                       required: "Password is required",
                       minLength: {
                         value: 6,
@@ -123,7 +143,7 @@ export default function Signup() {
                     type="password"
                     className={`form-control ${errors.confirmPassword && "is-invalid"}`}
                     placeholder="••••••••"
-                    {...register("confirmPassword", { 
+                    {...registerForm("confirmPassword", { 
                       required: "Please confirm your password",
                       validate: value => 
                         value === password || "Passwords do not match"
@@ -142,7 +162,7 @@ export default function Signup() {
                     className={`form-check-input ${errors.terms && "is-invalid"}`}
                     type="checkbox" 
                     id="terms" 
-                    {...register("terms", { 
+                    {...registerForm("terms", { 
                       required: "You must accept the terms and conditions" 
                     })}
                   />

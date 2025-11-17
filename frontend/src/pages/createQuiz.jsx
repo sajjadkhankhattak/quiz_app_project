@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, Plus, X, FileText, Clock, Tag, Image, BookOpen } from 'lucide-react';
+import { createQuiz } from '../services/api'; // Import the API function
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -37,6 +38,8 @@ const CreateQuiz = () => {
     correctAnswer: 0,
     points: 1
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
     'Mathematics',
@@ -212,32 +215,78 @@ const CreateQuiz = () => {
     scrollToNewQuestion();
   }, [quizData.questions.length]);
 
-  const handleSubmit = (e) => {
+  // SEND QUIZ DATA TO BACKEND
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Clear any pending auto-save
-    if (autoSaveTimerRef.current) {
-      clearTimeout(autoSaveTimerRef.current);
+    try {
+      // Clear any pending auto-save
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      
+      // Validate required fields
+      if (!quizData.title.trim()) {
+        alert('Please enter a quiz title');
+        return;
+      }
+      
+      if (!quizData.category) {
+        alert('Please select a category');
+        return;
+      }
+      
+      if (quizData.questions.length === 0) {
+        alert('Please add at least one question');
+        return;
+      }
+
+      console.log('Sending quiz data to backend:', quizData);
+      
+      // Prepare data for backend
+      const quizDataForBackend = {
+        title: quizData.title,
+        description: quizData.description,
+        category: quizData.category,
+        tags: quizData.tags,
+        duration: quizData.duration,
+        difficulty: quizData.difficulty,
+        questions: quizData.questions,
+        // For files, you might need to handle them differently
+        // image: quizData.image, // Base64 string
+        // notes: quizData.notes, // File object
+      };
+
+      // Send to backend using API service
+      const response = await createQuiz(quizDataForBackend);
+      
+      console.log('✅ Backend response:', response.data);
+      alert('✅ Quiz created successfully!');
+      
+      // Reset form
+      setQuizData({
+        title: '',
+        description: '',
+        category: '',
+        tags: [],
+        duration: 30,
+        difficulty: 'medium',
+        image: null,
+        notes: null,
+        questions: []
+      });
+      
+      // Focus back on title for new quiz
+      focusTitleInput();
+      
+    } catch (error) {
+      console.error('❌ Quiz creation error:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to create quiz. Please try again.';
+      alert(`❌ ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    console.log('Quiz Data:', quizData);
-    alert('Quiz created successfully!');
-    
-    // Reset form
-    setQuizData({
-      title: '',
-      description: '',
-      category: '',
-      tags: [],
-      duration: 30,
-      difficulty: 'medium',
-      image: null,
-      notes: null,
-      questions: []
-    });
-    
-    // Focus back on title for new quiz
-    focusTitleInput();
   };
 
   // Cleanup on unmount
@@ -637,9 +686,16 @@ const CreateQuiz = () => {
               <button
                 type="submit"
                 className="btn btn-primary btn-lg px-5 py-2"
-                disabled={quizData.questions.length === 0}
+                disabled={quizData.questions.length === 0 || isSubmitting}
               >
-                Create Quiz
+                {isSubmitting ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Creating Quiz...
+                  </>
+                ) : (
+                  'Create Quiz'
+                )}
               </button>
             </div>
           </form>

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, BookOpen, Clock, Users, BarChart, ArrowLeft, FileText, Download } from 'lucide-react';
+import { Play, BookOpen, Clock, Users, BarChart, ArrowLeft, FileText, Download, Send } from 'lucide-react';
+import { sendQuizData } from '../services/api'; // Import API function
 
 const QuizDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
+    const [isSending, setIsSending] = useState(false);
 
     // Mock data - in real app, fetch from API based on ID
     const quizzes = [
@@ -91,6 +93,36 @@ const QuizDetails = () => {
 
     // Find the specific quiz based on ID
     const quizData = quizzes.find(quiz => quiz.id === parseInt(id));
+
+    // Function to send data to backend
+    const handleSendToBackend = async () => {
+        setIsSending(true);
+        try {
+            // Prepare data to send
+            const dataToSend = {
+                quizId: quizData.id,
+                quizTitle: quizData.title,
+                category: quizData.category,
+                action: 'button_clicked',
+                timestamp: new Date().toISOString(),
+                message: 'Quiz details button clicked!'
+            };
+
+            console.log('Sending data to backend:', dataToSend);
+            
+            // Send to backend
+            const response = await sendQuizData(dataToSend);
+            
+            console.log('✅ Backend response:', response.data);
+            alert('✅ Data sent to backend successfully!');
+            
+        } catch (error) {
+            console.error('❌ Error sending data:', error);
+            alert('❌ Failed to send data to backend');
+        } finally {
+            setIsSending(false);
+        }
+    };
 
     // If quiz not found, show error
     if (!quizData) {
@@ -206,6 +238,21 @@ const QuizDetails = () => {
                                         <div>
                                             <h5 className="fw-semibold mb-3">About This Quiz</h5>
                                             <p className="text-muted mb-4">{quizData.description}</p>
+
+                                            {/* NEW: Send to Backend Button */}
+                                            <div className="mb-4">
+                                                <button
+                                                    onClick={handleSendToBackend}
+                                                    disabled={isSending}
+                                                    className="btn btn-info d-flex align-items-center"
+                                                >
+                                                    <Send size={16} className="me-2" />
+                                                    {isSending ? 'Sending to Backend...' : 'Send Data to Backend'}
+                                                </button>
+                                                <small className="text-muted d-block mt-1">
+                                                    Click to test backend connection with this quiz data
+                                                </small>
+                                            </div>
 
                                             <div className="row">
                                                 <div className="col-md-6">
@@ -337,6 +384,16 @@ const QuizDetails = () => {
                             >
                                 <BookOpen size={20} className="me-2" />
                                 Read Notes First
+                            </button>
+
+                            {/* NEW: Send to Backend Button in Sidebar */}
+                            <button
+                                onClick={handleSendToBackend}
+                                disabled={isSending}
+                                className="btn btn-outline-info w-100 d-flex align-items-center justify-content-center mt-3 py-2"
+                            >
+                                <Send size={16} className="me-2" />
+                                {isSending ? 'Sending...' : 'Test Backend'}
                             </button>
 
                             <div className="mt-4 pt-3 border-top">
