@@ -161,35 +161,120 @@ export const getQuizzes = async (req, res) => {
     });
   }
 };
-// TEST ENDPOINT - For testing button clicks
-export const testQuizEndpoint = async (req, res) => {
+// GET ALL USERS
+export const getAllUsers = async (req, res) => {
   try {
-    const { quizId, quizTitle, category, action, timestamp, message } = req.body;
-    
-    console.log("✅ TEST ENDPOINT - Received data:", req.body);
-    
-    // Simple response to confirm data was received
+    const users = await User.find();
+
     res.json({
       success: true,
-      message: "Data received successfully!",
-      receivedData: {
-        quizId,
-        quizTitle,
-        category,
-        action,
-        timestamp,
-        message
-      },
-      serverMessage: "Hello from backend! Your data has been received.",
-      status: "Data reached backend successfully!"
+      message: "Users fetched successfully!",
+      users: users
     });
 
   } catch (error) {
-    console.error("❌ Test endpoint error:", error);
+    console.error("❌ Get users error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to process request",
+      message: "Failed to fetch users",
       error: error.message
     });
   }
 };
+
+// UPDATE USER
+export const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updateData = req.body;
+
+    console.log("✅ UPDATE USER - Received:", { userId, updateData });
+
+    // Find and update user
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User updated successfully!",
+      user: updatedUser
+    });
+
+  } catch (error) {
+    console.error("❌ Update user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update user",
+      error: error.message
+    });
+  }
+};
+
+// DELETE USER
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    console.log("✅ DELETE USER - Received:", { userId });
+
+    // Find and delete user
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User deleted successfully!",
+      user: deletedUser
+    });
+
+  } catch (error) {
+    console.error("❌ Delete user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete user",
+      error: error.message
+    });
+  }
+};
+
+// // TEST ENDPOINT - For testing button clicks
+// export const testQuizEndpoint = async (req, res) => {
+//   try {
+//     const { quizId, quizTitle, category, action, timestamp, message } = req.body;
+
+//     console.log("✅ TEST ENDPOINT - Received data:", req.body);
+
+//     // Simple response to confirm data was received
+//     res.json({
+//       success: true,
+//       message: "Data received successfully!",
+//       receivedData: {
+//         quizId,
+//         quizTitle,
+//         category,
+//         action,
+//         timestamp,
+//         message
+//       },
+//       serverMessage: "Hello from backend! Your data has been received.",
+//       status: "Data reached backend successfully!"
+//     });
+
+//   } catch (error) {
+//     console.error("❌ Test endpoint error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to process request",
+//       error: error.message

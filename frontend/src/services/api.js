@@ -26,3 +26,24 @@ export const deleteQuiz = async (id) => {
 export const sendQuizData = async (quizData) => {
   return await axios.post(`${BASE_URL}/api/quiz/test`, quizData);
 }
+// Add these to your existing API functions
+
+// Create new user
+export const createUser = async (userData) => {
+  return await axios.post(`${BASE_URL}/api/auth/signup`, userData);
+}
+
+// Update user
+export const updateUser = async (userId, userData) => {
+  return await axios.put(`${BASE_URL}/api/users/${userId}`, userData);
+}
+
+// Delete user
+export const deleteUser = async (userId) => {
+  return await axios.delete(`${BASE_URL}/api/users/${userId}`);
+}
+
+// Get all users]
+export const getUsers = async () => {
+  return await axios.get(`${BASE_URL}/api/users`);
+}

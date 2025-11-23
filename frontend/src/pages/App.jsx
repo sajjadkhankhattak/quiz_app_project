@@ -1,4 +1,4 @@
-import Menu from './Menu';
+import Menu from '../components/Menu';
 import './App.css';
 import "bootstrap/dist/js/bootstrap.js";
 

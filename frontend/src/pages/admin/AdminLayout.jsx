@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Settings, Plus, Trash2, Edit, Eye, Home, ArrowLeft } from 'lucide-react';
+import { Users, Plus, Trash2, Edit, Eye, Home, ArrowLeft } from 'lucide-react';
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -12,6 +12,7 @@ export default function AdminLayout() {
     { path: '/admin/add', icon: Plus, label: 'Add Quiz' },
     { path: '/admin/update', icon: Edit, label: 'Update Quiz' },
     { path: '/admin/delete', icon: Trash2, label: 'Delete Quiz' },
+    {path: '/admin/users', icon: Users, label: 'Manage Users' }
   ];
 
   const isActive = (path, exact = false) => {
