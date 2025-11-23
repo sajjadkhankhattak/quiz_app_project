@@ -1,21 +1,43 @@
 import { useState, useEffect } from 'react';
 import { Search, Trash2, AlertTriangle, X, Check } from 'lucide-react';
+import { getQuizzes, deleteQuiz } from '../../services/api.js';
 
 export default function DeleteQuiz() {
   const [quizzes, setQuizzes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [quizToDelete, setQuizToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
-  // Mock data - replace with actual API call
+  // Fetch quizzes from API
   useEffect(() => {
-    const mockQuizzes = [
-      { id: 1, title: 'JavaScript Basics', category: 'Programming', questions: 10, created: '2024-01-15' },
-      { id: 2, title: 'React Fundamentals', category: 'Web Development', questions: 15, created: '2024-01-10' },
-      { id: 3, title: 'CSS Advanced', category: 'Web Development', questions: 8, created: '2024-01-05' },
-      { id: 4, title: 'Node.js Quiz', category: 'Backend', questions: 12, created: '2024-01-01' },
-    ];
-    setQuizzes(mockQuizzes);
+    const fetchQuizzes = async () => {
+      try {
+        setLoading(true);
+        const response = await getQuizzes();
+        if (response.data.success) {
+          // Transform data to match component format
+          const transformedQuizzes = response.data.quizzes.map(quiz => ({
+            id: quiz._id,
+            title: quiz.title,
+            category: quiz.category,
+            questions: quiz.questions.length,
+            created: new Date(quiz.createdAt).toLocaleDateString()
+          }));
+          setQuizzes(transformedQuizzes);
+        } else {
+          setError('Failed to fetch quizzes');
+        }
+      } catch (err) {
+        setError('Error fetching quizzes: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizzes();
   }, []);
 
   const filteredQuizzes = quizzes.filter(quiz =>
@@ -27,13 +49,28 @@ export default function DeleteQuiz() {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (quizToDelete) {
-      // Remove from local state (replace with API call)
-      setQuizzes(quizzes.filter(q => q.id !== quizToDelete.id));
-      setShowDeleteModal(false);
-      setQuizToDelete(null);
-      alert('Quiz deleted successfully!');
+      try {
+        setDeleting(true);
+        setError(null);
+
+        const response = await deleteQuiz(quizToDelete.id);
+
+        if (response.data.success) {
+          // Remove from local state
+          setQuizzes(quizzes.filter(q => q.id !== quizToDelete.id));
+          setShowDeleteModal(false);
+          setQuizToDelete(null);
+          alert('Quiz deleted successfully!');
+        } else {
+          setError('Failed to delete quiz');
+        }
+      } catch (err) {
+        setError('Error deleting quiz: ' + err.message);
+      } finally {
+        setDeleting(false);
+      }
     }
   };
 
@@ -46,10 +83,27 @@ export default function DeleteQuiz() {
     <div>
       <h2 className="mb-4">Delete Quiz</h2>
 
-      <div className="alert alert-warning">
-        <AlertTriangle size={18} className="me-2" />
-        <strong>Warning:</strong> Deleting a quiz is permanent and cannot be undone.
-      </div>
+      {loading && (
+        <div className="text-center py-4">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading quizzes...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="alert alert-danger">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <>
+          <div className="alert alert-warning">
+            <AlertTriangle size={18} className="me-2" />
+            <strong>Warning:</strong> Deleting a quiz is permanent and cannot be undone.
+          </div>
 
       {/* Search */}
       <div className="row mb-4">
@@ -149,15 +203,27 @@ export default function DeleteQuiz() {
                   type="button"
                   className="btn btn-danger"
                   onClick={confirmDelete}
+                  disabled={deleting}
                 >
-                  <Check size={18} className="me-2" />
-                  Delete Quiz
+                  {deleting ? (
+                    <>
+                      <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Check size={18} className="me-2" />
+                      Delete Quiz
+                    </>
+                  )}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+    </>
+  )}
     </div>
   );
 }

@@ -1,36 +1,45 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Search, Edit, Save, RotateCcw } from 'lucide-react';
+import { getQuizzes, updateQuiz } from '../../services/api.js';
 
 export default function UpdateQuiz() {
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
-  // Mock data - replace with actual API call
+  // Fetch quizzes from API
   useEffect(() => {
-    const mockQuizzes = [
-      { 
-        id: 1, 
-        title: 'JavaScript Basics', 
-        category: 'Programming', 
-        description: 'Basic JavaScript concepts quiz',
-        questions: [
-          { text: 'What is JavaScript?', options: ['Language', 'Framework', 'Library', 'Tool'], correctAnswer: 0 }
-        ]
-      },
-      { 
-        id: 2, 
-        title: 'React Fundamentals', 
-        category: 'Web Development', 
-        description: 'React.js basic concepts',
-        questions: [
-          { text: 'What is React?', options: ['Library', 'Framework', 'Language', 'Database'], correctAnswer: 0 }
-        ]
-      },
-    ];
-    setQuizzes(mockQuizzes);
+    const fetchQuizzes = async () => {
+      try {
+        setLoading(true);
+        const response = await getQuizzes();
+        if (response.data.success) {
+          // Transform data to match component format
+          const transformedQuizzes = response.data.quizzes.map(quiz => ({
+            id: quiz._id,
+            title: quiz.title,
+            category: quiz.category,
+            description: quiz.description,
+            questions: quiz.questions
+          }));
+          setQuizzes(transformedQuizzes);
+        } else {
+          setError('Failed to fetch quizzes');
+        }
+      } catch (err) {
+        setError('Error fetching quizzes: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizzes();
   }, []);
 
   const filteredQuizzes = quizzes.filter(quiz =>
@@ -44,24 +53,38 @@ export default function UpdateQuiz() {
     setValue('description', quiz.description);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!selectedQuiz) {
       alert('Please select a quiz to update');
       return;
     }
-    
-    const updatedQuiz = {
-      ...selectedQuiz,
-      ...data
-    };
-    
-    console.log('Updated Quiz:', updatedQuiz);
-    alert('Quiz updated successfully!');
-    
-    // Update in local state (replace with API call)
-    setQuizzes(quizzes.map(q => q.id === selectedQuiz.id ? updatedQuiz : q));
-    reset();
-    setSelectedQuiz(null);
+
+    try {
+      setUpdating(true);
+      setError(null);
+
+      const updateData = {
+        title: data.title,
+        category: data.category,
+        description: data.description
+      };
+
+      const response = await updateQuiz(selectedQuiz.id, updateData);
+
+      if (response.data.success) {
+        alert('Quiz updated successfully!');
+        // Update local state
+        setQuizzes(quizzes.map(q => q.id === selectedQuiz.id ? { ...q, ...updateData } : q));
+        reset();
+        setSelectedQuiz(null);
+      } else {
+        setError('Failed to update quiz');
+      }
+    } catch (err) {
+      setError('Error updating quiz: ' + err.message);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const handleReset = () => {
@@ -73,7 +96,23 @@ export default function UpdateQuiz() {
     <div>
       <h2 className="mb-4">Update Quiz</h2>
 
-      <div className="row">
+      {loading && (
+        <div className="text-center py-4">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading quizzes...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="alert alert-danger">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="row">
         {/* Quiz Selection */}
         <div className="col-md-4">
           <div className="card">
@@ -180,10 +219,25 @@ export default function UpdateQuiz() {
                     />
                   </div>
 
+                  {error && (
+                    <div className="alert alert-danger mb-3">
+                      {error}
+                    </div>
+                  )}
+
                   <div className="d-flex gap-2">
-                    <button type="submit" className="btn btn-success">
-                      <Save size={18} className="me-2" />
-                      Update Quiz
+                    <button type="submit" className="btn btn-success" disabled={updating}>
+                      {updating ? (
+                        <>
+                          <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Save size={18} className="me-2" />
+                          Update Quiz
+                        </>
+                      )}
                     </button>
                     <button type="button" className="btn btn-secondary" onClick={handleReset}>
                       <RotateCcw size={18} className="me-2" />
@@ -200,6 +254,7 @@ export default function UpdateQuiz() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

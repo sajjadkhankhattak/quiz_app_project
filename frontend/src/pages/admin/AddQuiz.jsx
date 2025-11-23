@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { Plus, X, Save } from 'lucide-react';
+import { createQuiz } from '../../services/api.js';
 
 export default function AddQuiz() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const addQuestion = () => {
     setQuestions([...questions, {
@@ -36,15 +41,46 @@ export default function AddQuiz() {
     }));
   };
 
-  const onSubmit = (data) => {
-    const quizData = {
-      ...data,
-      questions: questions
-    };
-    console.log('Quiz Data:', quizData);
-    alert('Quiz created successfully!');
-    reset();
-    setQuestions([]);
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Validate questions
+      if (questions.length === 0) {
+        setError('At least one question is required');
+        return;
+      }
+
+      // Transform questions to match backend format
+      const formattedQuestions = questions.map(q => ({
+        questionText: q.text,
+        options: q.options,
+        correctAnswer: q.options[q.correctAnswer]
+      }));
+
+      const quizData = {
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        questions: formattedQuestions
+      };
+
+      const response = await createQuiz(quizData);
+
+      if (response.data.success) {
+        alert('Quiz created successfully!');
+        reset();
+        setQuestions([]);
+        navigate('/admin/view'); // Redirect to view quizzes page
+      } else {
+        setError('Failed to create quiz');
+      }
+    } catch (err) {
+      setError('Error creating quiz: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -169,10 +205,25 @@ export default function AddQuiz() {
           )}
         </div>
 
+        {error && (
+          <div className="alert alert-danger mb-3">
+            {error}
+          </div>
+        )}
+
         <div className="d-flex gap-2">
-          <button type="submit" className="btn btn-success">
-            <Save size={18} className="me-2" />
-            Create Quiz
+          <button type="submit" className="btn btn-success" disabled={loading}>
+            {loading ? (
+              <>
+                <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                Creating...
+              </>
+            ) : (
+              <>
+                <Save size={18} className="me-2" />
+                Create Quiz
+              </>
+            )}
           </button>
           <button type="button" className="btn btn-secondary" onClick={() => reset()}>
             Reset Form

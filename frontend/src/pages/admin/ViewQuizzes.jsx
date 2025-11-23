@@ -1,20 +1,42 @@
 import { useState, useEffect } from 'react';
 import { Eye, Search, Filter, Download } from 'lucide-react';
+import { getQuizzes } from '../../services/api.js';
 
 export default function ViewQuizzes() {
   const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 
-  // Mock data - replace with actual API call
+  // Fetch quizzes from API
   useEffect(() => {
-    const mockQuizzes = [
-      { id: 1, title: 'JavaScript Basics', category: 'Programming', questions: 10, created: '2024-01-15', status: 'Active' },
-      { id: 2, title: 'React Fundamentals', category: 'Web Development', questions: 15, created: '2024-01-10', status: 'Active' },
-      { id: 3, title: 'CSS Advanced', category: 'Web Development', questions: 8, created: '2024-01-05', status: 'Inactive' },
-      { id: 4, title: 'Node.js Quiz', category: 'Backend', questions: 12, created: '2024-01-01', status: 'Active' },
-    ];
-    setQuizzes(mockQuizzes);
+    const fetchQuizzes = async () => {
+      try {
+        setLoading(true);
+        const response = await getQuizzes();
+        if (response.data.success) {
+          // Transform data to match table format
+          const transformedQuizzes = response.data.quizzes.map(quiz => ({
+            id: quiz._id,
+            title: quiz.title,
+            category: quiz.category,
+            questions: quiz.questions.length,
+            created: new Date(quiz.createdAt).toLocaleDateString(),
+            status: 'Active' // Assuming all quizzes are active
+          }));
+          setQuizzes(transformedQuizzes);
+        } else {
+          setError('Failed to fetch quizzes');
+        }
+      } catch (err) {
+        setError('Error fetching quizzes: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizzes();
   }, []);
 
   const filteredQuizzes = quizzes.filter(quiz =>
@@ -68,44 +90,57 @@ export default function ViewQuizzes() {
       {/* Quizzes Table */}
       <div className="card">
         <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Questions</th>
-                  <th>Created</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredQuizzes.map(quiz => (
-                  <tr key={quiz.id}>
-                    <td>{quiz.title}</td>
-                    <td>
-                      <span className="badge bg-secondary">{quiz.category}</span>
-                    </td>
-                    <td>{quiz.questions}</td>
-                    <td>{quiz.created}</td>
-                    <td>
-                      <span className={`badge ${quiz.status === 'Active' ? 'bg-success' : 'bg-warning'}`}>
-                        {quiz.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="btn btn-sm btn-outline-primary">
-                        <Eye size={16} />
-                      </button>
-                    </td>
+          {loading ? (
+            <div className="text-center py-4">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <p className="mt-2">Loading quizzes...</p>
+            </div>
+          ) : error ? (
+            <div className="alert alert-danger">
+              {error}
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Questions</th>
+                    <th>Created</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          {filteredQuizzes.length === 0 && (
+                </thead>
+                <tbody>
+                  {filteredQuizzes.map(quiz => (
+                    <tr key={quiz.id}>
+                      <td>{quiz.title}</td>
+                      <td>
+                        <span className="badge bg-secondary">{quiz.category}</span>
+                      </td>
+                      <td>{quiz.questions}</td>
+                      <td>{quiz.created}</td>
+                      <td>
+                        <span className={`badge ${quiz.status === 'Active' ? 'bg-success' : 'bg-warning'}`}>
+                          {quiz.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button className="btn btn-sm btn-outline-primary">
+                          <Eye size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {!loading && !error && filteredQuizzes.length === 0 && (
             <div className="text-center py-4">
               <p className="text-muted">No quizzes found</p>
             </div>

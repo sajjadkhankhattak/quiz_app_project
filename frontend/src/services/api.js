@@ -22,6 +22,11 @@ export const getQuizzes = async () => {
 export const deleteQuiz = async (id) => {
   return await axios.delete(`${BASE_URL}/api/quiz/${id}`);
 }
+
+export const updateQuiz = async (id, quizData) => {
+  return await axios.put(`${BASE_URL}/api/quiz/${id}`, quizData);
+}
+
 // Add this to your existing services/api.js
 export const sendQuizData = async (quizData) => {
   return await axios.post(`${BASE_URL}/api/quiz/test`, quizData);
